@@ -1,0 +1,35 @@
+{
+  "name": "assignment-api-design",
+  "version": "1.0.0",
+  "description": "1DV027 assignment: A RESTful Movie API.",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon --inspect --env-file=.env src/server.js",
+    "lint": "npx eslint ./src || exit 0",
+    "lint:fix": "npx eslint ./src --fix || exit 0"
+  },
+  "contributors": [
+    "Liv Åberg <lh224hh@student.lnu.se>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "http-errors": "^2.0.0",
+    "mongoose": "^7.8.7"
+  },
+  "devDependencies": {
+    "@lnu/eslint-config": "1.1.10",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3"
+  }
+}
