@@ -1,0 +1,25 @@
+stages:
+  - install
+  - lint
+  - test
+
+variables:
+  NODE_ENV: development
+
+before_script:
+  - npm ci
+
+install:
+  stage: install
+  script:
+    - echo "✅ Dependencies installed."
+
+lint:
+  stage: lint
+  script:
+    - npm run lint
+
+test:
+  stage: test
+  script:
+    - node -v

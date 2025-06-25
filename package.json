@@ -11,7 +11,8 @@
     "start": "node src/server.js",
     "dev": "nodemon --inspect src/server.js",
     "lint": "npx eslint ./src || exit 0",
-    "lint:fix": "npx eslint ./src --fix || exit 0"
+    "lint:fix": "npx eslint ./src --fix || exit 0",
+    "seed": "node seeds/seed.js"
   },
   "contributors": [
     "Liv Åberg <lh224hh@student.lnu.se>"
@@ -20,6 +21,7 @@
   "private": true,
   "dependencies": {
     "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.0",
