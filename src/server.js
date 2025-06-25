@@ -8,9 +8,15 @@
 import cors from 'cors' // Middleware for enabling CORS
 import express from 'express' // Express framework
 import helmet from 'helmet' // Middleware for setting various HTTP headers for security
+import dotenv from 'dotenv' // Module to load environment variables from a .env file
+
+import { connectToDatabase } from '../db.js' // Function to connect to MongoDB
+
+dotenv.config() // Load environment variables from .env file
 
 // Connect to MongoDB.
 // await connectToDatabase(process.env.DB_CONNECTION_STRING)
+await connectToDatabase(process.env.MONGODB_URI)
 
 // Create an Express application.
 const app = express()
