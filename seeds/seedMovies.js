@@ -10,6 +10,24 @@ dotenv.config()
 const MONGODB_URI = process.env.MONGODB_URI
 
 /**
+ * Parses a string of genres formatted as JSON and returns a comma-separated string of genre names.
+ *
+ * @param {string} genresString - The string containing genres in JSON format.
+ * @returns {string} A comma-separated string of genre names, or an empty string if parsing fails.
+ */
+function parseGenres (genresString) {
+  try {
+    const genresArray = JSON.parse(genresString.replace(/'/g, '"')) // Replace single quotes with double quotes for valid JSON
+    if (Array.isArray(genresArray) && genresArray.length > 0) {
+      return genresArray.map(g => g.name).join(', ')
+    }
+    return ''
+  } catch (err) {
+    return ''
+  }
+}
+
+/**
  * Seed the first 200 movies from a CSV file into the MongoDB database.
  * Clears existing movies before inserting new ones.
  *
@@ -20,12 +38,11 @@ const MONGODB_URI = process.env.MONGODB_URI
  */
 const seedMovies = async () => {
   try {
-    if (mongoose.connection.readyState === 0) { // only connect if not already connected
+    if (mongoose.connection.readyState === 0) {
       await mongoose.connect(MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
       })
-      console.log('Connected to MongoDB for seeding movies...')
     }
 
     const results = []
@@ -37,13 +54,16 @@ const seedMovies = async () => {
         .pipe(csv())
         .on('data', (data) => {
           if (count < maxEntries) {
+            const releaseYear = data.release_date ? new Date(data.release_date).getFullYear() : null
+            const genreString = data.genres || ''
+            const genresParsed = parseGenres(genreString)
+
             results.push({
-              id: Number(data.id),
               title: data.title,
-              budget: Number(data.budget) || 0,
-              release_date: data.release_date ? new Date(data.release_date) : null,
-              overview: data.overview,
-              popularity: Number(data.popularity) || 0
+              release_year: releaseYear,
+              genre: genresParsed,
+              description: data.overview || '',
+              tmdbId: Number(data.id) || null
             })
             count++
           }

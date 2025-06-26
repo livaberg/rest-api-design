@@ -6,12 +6,10 @@ stages:
 variables:
   NODE_ENV: development
 
-before_script:
-  - npm ci
-
 install:
   stage: install
   script:
+    - npm ci
     - echo "✅ Dependencies installed."
 
 lint:

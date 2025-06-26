@@ -1,9 +1,9 @@
 import seedMovies from './seedMovies.js'
-import seedCredits from './seedCredits.js'
+import seedActors from './seedActors.js'
 import seedRatings from './seedRatings.js'
 
 /**
- * Seeds the database with initial data for movies and associated credits and ratings.
+ * Seeds the database with initial data for movies and associated actors and ratings.
  *
  * @async
  * @function runSeeders
@@ -13,8 +13,8 @@ const runSeeders = async () => {
   try {
     console.log('Seeding movies...')
     await seedMovies()
-    console.log('Seeding credits...')
-    await seedCredits()
+    console.log('Seeding actors...')
+    await seedActors()
     console.log('Seeding ratings...')
     await seedRatings()
     console.log('All data seeded successfully!')

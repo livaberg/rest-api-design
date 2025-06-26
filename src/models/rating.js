@@ -4,10 +4,16 @@ import mongoose from 'mongoose'
  * Rating schema representing a user's rating for a movie.
  */
 const ratingSchema = new mongoose.Schema({
-  userId: Number,
-  movieId: Number,
-  rating: Number,
-  timestamp: Number
+  id: Number,
+  rating: {
+    type: Number,
+    required: true
+  },
+  movie: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Movie',
+    required: true
+  }
 })
 
 export default mongoose.model('Rating', ratingSchema)
