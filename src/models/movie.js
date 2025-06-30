@@ -14,4 +14,4 @@ const movieSchema = new mongoose.Schema({
   tmdbId: Number
 })
 
-export default mongoose.model('Movie', movieSchema)
+export const MovieModel = mongoose.model('Movie', movieSchema)

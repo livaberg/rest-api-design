@@ -20,6 +20,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@lnu/json-js-cycle": "^2.0.5",
     "cors": "^2.8.5",
     "csv-parser": "^3.2.0",
     "dotenv": "^16.5.0",

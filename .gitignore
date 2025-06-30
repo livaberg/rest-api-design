@@ -195,4 +195,7 @@ dist
 .history
 .ionide
 
+# CSV files for database population
+dataset/
+
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode,macos,dotenv
