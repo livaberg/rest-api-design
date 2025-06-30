@@ -16,7 +16,7 @@ export class MovieController {
    *
    * @param {object} movieService - The service for handling movie-related operations.
    */
-  constructor (movieService) {
+  constructor(movieService) {
     this.movieService = movieService
   }
 
@@ -50,7 +50,7 @@ export class MovieController {
   //     next(error)
   //   }
   // }
-  
+
   /**
    * Retrieves all movies, including filtering and pagination based on query parameters.
    *
@@ -61,20 +61,42 @@ export class MovieController {
   async getAllMovies(req, res) {
     try {
       const result = await this.movieService.getAllMovies(req.query)
-      res.status(200).json(result)
+
+      const movies = result.movies.map((movie) => ({
+        id: movie._id,
+        title: movie.title,
+        release_year: movie.release_year,
+        genre: movie.genre,
+        description: movie.description,
+        links: {
+          self: `/movies/${movie._id}`,
+          ratings: `/movies/${movie._id}/ratings`,
+        },
+      }))
+
+      res.status(200).json({
+        data: movies,
+        total: result.total,
+        page: result.page,
+        pages: result.pages,
+        links: {
+          self: req.originalUrl,
+        },
+      })
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch movies.', error: error.message })
+      res
+        .status(500)
+        .json({ message: 'Failed to fetch movies.', error: error.message })
     }
   }
-    
-// getMovie
-  
-// createMovie
 
-// updateMovie
-  
-// deleteMovie
-  
-// getMovieRatings
+  // getMovie
 
+  // createMovie
+
+  // updateMovie
+
+  // deleteMovie
+
+  // getMovieRatings
 }
