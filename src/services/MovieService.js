@@ -55,7 +55,7 @@ export class MovieService {
       movies,
       total,
       page,
-      pages: `Page ${page} of ${Math.ceil(total / limit)}`,
+      pages: Math.ceil(total / limit),
     }
   }
 
