@@ -57,6 +57,64 @@ export class MovieService {
       page,
       pages: `Page ${page} of ${Math.ceil(total / limit)}`,
     }
-    // return this.movieRepository.getAllMovies(filter, options)
+  }
+
+  /**
+   * Retrieves a single movie by its ID.
+   *
+   * @param {string} id - The ID of the movie to retrieve.
+   * @returns {Promise<object|null>} - A promise that resolves to the movie object if found, or null if not.
+   */
+  async getMovie(id) {
+    // Call the repository method to fetch the movie by ID.
+    const movie = await this.movieRepository.getMovie(id)
+    return movie || null
+  }
+
+  /**
+   * Creates a new movie.
+   *
+   * @param {object} movieData - The data for the movie to create.
+   * @returns {Promise<object>} - The created movie document.
+   */
+  async createMovie(movieData) {
+    // Validering eller annan affärslogik kan läggas här
+    const createdMovie = await this.movieRepository.createMovie(movieData)
+    return createdMovie
+  }
+
+  /**
+   * Updates an existing movie by ID.
+   *
+   * @param {string} id - The ID of the movie to update.
+   * @param {object} updateData - The data to update the movie with.
+   * @returns {Promise<object|null>} - The updated movie document or null if not found.
+   */
+  async updateMovie(id, updateData) {
+    // Validering eller affärslogik
+    const updatedMovie = await this.movieRepository.updateMovie(id, updateData)
+    return updatedMovie
+  }
+
+  /**
+   * Deletes a movie by ID.
+   *
+   * @param {string} id - The ID of the movie to delete.
+   * @returns {Promise<boolean>} - True if deleted, false if not found.
+   */
+  async deleteMovie(id) {
+    const deleted = await this.movieRepository.deleteMovie(id)
+    return deleted
+  }
+
+  /**
+   * Retrieves ratings for a specific movie.
+   *
+   * @param {string} movieId - The ID of the movie to get ratings for.
+   * @returns {Promise<Array>} - An array of ratings.
+   */
+  async getMovieRatings(movieId) {
+    const ratings = await this.movieRepository.getMovieRatings(movieId)
+    return ratings
   }
 }

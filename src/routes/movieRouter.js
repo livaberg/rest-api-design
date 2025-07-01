@@ -22,36 +22,188 @@ router.param('id', (req, res, next, id) =>
 
 /**
  * @swagger
- * /movies:
- *   get:
- *     tags:
- *       - Movies
- *     summary: Get all movies
- *     parameters:
- *       - in: query
- *         name: genre
- *         schema:
- *           type: string
- *         description: Filter by genre
- *       - in: query
- *         name: page
- *         schema:
- *           type: integer
- *         description: Page number
- *     responses:
- *       200:
- *         description: List of movies
- *       500:
- *         description: Server error
+ *  /movies:
+ *    get:
+ *      tags:
+ *        - Movies
+ *      summary: Get all movies
+ *      parameters:
+ *        - in: query
+ *          name: genre
+ *          schema:
+ *            type: string
+ *          description: Filter by genre
+ *        - in: query
+ *          name: page
+ *          schema:
+ *            type: integer
+ *          description: Page number
+ *      responses:
+ *        200:
+ *          description: List of movies
+ *        500:
+ *          description: Server error
  */
 router.get('/', (req, res) => movieController.getAllMovies(req, res))
 
+/**
+ * @swagger
+ *  /movies/{id}:
+ *    get:
+ *      tags:
+ *        - Movies
+ *      summary: Get a single movie by ID
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *            description: Movie ID
+ *      responses:
+ *        200:
+ *          description: Movie details
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  data:
+ *                    $ref: '#/components/schemas/Movie'
+ *        404:
+ *          description: Movie not found
+ *        500:
+ *          description: Server error
+ */
 router.get('/:id', (req, res) => movieController.getMovie(req, res))
 
+/**
+ * @swagger
+ *  /movies:
+ *    post:
+ *      tags:
+ *        - Movies
+ *      summary: Create a new movie
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/MovieInput'
+ *      responses:
+ *        201:
+ *          description: Movie created
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  data:
+ *                    $ref: '#/components/schemas/Movie'
+ *        500:
+ *          description: Server error
+ */
 router.post('/', (req, res) => movieController.createMovie(req, res))
 
+/**
+ * @swagger
+ *  /movies/{id}:
+ *    put:
+ *      tags:
+ *        - Movies
+ *      summary: Update an existing movie by ID
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Movie ID
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/MovieInput'
+ *      responses:
+ *        200:
+ *          description: Movie updated
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  data:
+ *                    $ref: '#/components/schemas/Movie'
+ *        404:
+ *          description: Movie not found
+ *        500:
+ *          description: Server error
+ */
 router.put('/:id', (req, res) => movieController.updateMovie(req, res))
 
+/**
+ * @swagger
+ *  /movies/{id}:
+ *    delete:
+ *      tags:
+ *        - Movies
+ *      summary: Delete a movie by ID
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *            description: Movie ID
+ *      responses:
+ *        204:
+ *          description: Movie deleted successfully (No Content)
+ *        404:
+ *          description: Movie not found
+ *        500:
+ *          description: Server error
+ */
 router.delete('/:id', (req, res) => movieController.deleteMovie(req, res))
 
-router.get('/:id/ratings', (req, res) => movieController.getMovieRatings(req, res))
+/**
+ * @swagger
+ *  /movies/{id}/ratings:
+ *    get:
+ *      tags:
+ *        - Movies
+ *      summary: Get ratings for a movie by ID
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: Movie ID
+ *      responses:
+ *        200:
+ *          description: List of ratings for the movie
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  data:
+ *                    type: array
+ *                    items:
+ *                      $ref: '#/components/schemas/Rating'
+ *                  links:
+ *                    type: object
+ *                    properties:
+ *                      self:
+ *                        type: string
+ *                        example: "/movies/{id}/ratings"
+ *                      movie:
+ *                        type: string
+ *                        example: "/movies/{id}"
+ *                    500:
+ *                      description: Server error
+ */
+router.get('/:id/ratings', (req, res) =>
+  movieController.getMovieRatings(req, res)
+)

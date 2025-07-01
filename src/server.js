@@ -40,15 +40,8 @@ app.use(cors())
 
 app.use(express.json())
 
-// app.get('/', (req, res) => {
-//   res.status(200).json({
-//     status: 'OK',
-//     message: 'API is running! 🚀'
-//   })
-// })
-
 // Register routes.
-  app.use('/api', apiRouter)
+  app.use('/api/v1', apiRouter)
 
 // Use the Swagger UI middleware to serve API documentation.
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
