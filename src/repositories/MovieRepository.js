@@ -5,6 +5,7 @@
  */
 
 import { MovieModel } from '../models/movie.js'
+import { RatingModel } from '../models/rating.js'
 
 /**
  * Repository for accessing movie data.
@@ -87,7 +88,7 @@ export class MovieRepository {
    * @returns {Promise<Array>} - An array of rating documents.
    */
   async getMovieRatings(movieId) {
-    const movie = await MovieModel.findById(movieId, 'ratings').exec()
-    return movie ? movie.ratings : []
+    return RatingModel.find({ movie: movieId })
+      .exec()
   }
 }

@@ -12,9 +12,11 @@ export class MovieService {
    * Creates an instance of the MovieService.
    *
    * @param {object} movieRepository - The repository for accessing movie data.
+   * @param {object} ratingRepository - The repository for accessing rating data.
    */
-  constructor(movieRepository) {
+  constructor(movieRepository, ratingRepository) {
     this.movieRepository = movieRepository
+    this.ratingRepository = ratingRepository
   }
 
   /**
@@ -114,7 +116,6 @@ export class MovieService {
    * @returns {Promise<Array>} - An array of ratings.
    */
   async getMovieRatings(movieId) {
-    const ratings = await this.movieRepository.getMovieRatings(movieId)
-    return ratings
+    return this.ratingRepository.getRatingsByMovieId(movieId)
   }
 }

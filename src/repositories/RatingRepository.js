@@ -34,4 +34,14 @@ export class RatingRepository {
   async countRatings(filter = {}) {
     return RatingModel.countDocuments(filter).exec()
   }
+
+/**
+ * Retrieves ratings for a specific movie by its ID.
+ *
+ * @param {string} movieId - The ID of the movie.
+ * @returns {Promise<Array>} - A promise that resolves to an array of rating documents.
+ */
+  async getRatingsByMovieId(movieId) {
+    return RatingModel.find({ movie: movieId }).exec()
+  }
 }

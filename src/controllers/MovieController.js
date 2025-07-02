@@ -99,6 +99,7 @@ export class MovieController {
   async getMovie(req, res) {
     try {
       const movie = await this.movieService.getMovie(req.params.id)
+      console.log('Movie:', movie)
       if (!movie) {
         return res.status(404).json({ message: 'Movie not found' })
       }
@@ -114,6 +115,9 @@ export class MovieController {
             self: `/movies/${movie._id}`,
             ratings: `/movies/${movie._id}/ratings`,
           },
+        },
+        links: {
+          self: req.originalUrl,
         },
       })
     } catch (error) {
@@ -144,6 +148,9 @@ export class MovieController {
             self: `/movies/${created._id}`,
             ratings: `/movies/${created._id}/ratings`,
           },
+        },
+        links: {
+          self: req.originalUrl,
         },
       })
     } catch (error) {
@@ -180,6 +187,9 @@ export class MovieController {
             self: `/movies/${updated._id}`,
             ratings: `/movies/${updated._id}/ratings`,
           },
+        },
+        links: {
+          self: req.originalUrl,
         },
       })
     } catch (error) {
@@ -223,10 +233,8 @@ export class MovieController {
 
       const formattedRatings = ratings.map(r => ({
         id: r._id,
-        value: r.value,
-        reviewer: r.reviewer,
+        rating: r.rating,
         links: {
-          self: `/ratings/${r._id}`,
           movie: `/movies/${r.movie}`
         }
       }))
@@ -234,8 +242,7 @@ export class MovieController {
       res.status(200).json({
         data: formattedRatings,
         links: {
-          self: `/movies/${req.params.id}/ratings`,
-          movie: `/movies/${req.params.id}`,
+          self: req.originalUrl,
         },
       })
     } catch (error) {

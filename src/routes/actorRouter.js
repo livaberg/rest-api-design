@@ -7,6 +7,7 @@
 import { ActorRepository } from '../repositories/ActorRepository.js'
 import { ActorService } from '../services/ActorService.js'
 import { ActorController } from '../controllers/ActorController.js'
+import { validateQueries } from '../middlewares/validation.js'
 
 import express from 'express'
 
@@ -69,4 +70,4 @@ const actorController = new ActorController(actorService)
  *       500:
  *         description: Server error
  */
-router.get('/', (req, res) => actorController.getAllActors(req, res))
+router.get('/', validateQueries, (req, res) => actorController.getAllActors(req, res))
