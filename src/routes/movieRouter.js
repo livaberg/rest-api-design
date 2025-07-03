@@ -9,6 +9,7 @@ import { RatingRepository } from '../repositories/RatingRepository.js'
 import { MovieService } from '../services/MovieService.js'
 import { MovieController } from '../controllers/MovieController.js'
 import { validateQueries, validateBody } from '../middlewares/validation.js'
+import { authenticateJWT } from '../middlewares/auth.js'
 
 import express from 'express'
 
@@ -98,6 +99,8 @@ router.get('/:id', (req, res) => movieController.getMovie(req, res))
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/MovieInput'
+ *      security:
+ *        - bearerAuth: []
  *      responses:
  *        201:
  *          description: Movie created
@@ -111,7 +114,7 @@ router.get('/:id', (req, res) => movieController.getMovie(req, res))
  *        500:
  *          description: Server error
  */
-router.post('/', validateBody, (req, res) => movieController.createMovie(req, res))
+router.post('/', authenticateJWT, validateBody, (req, res) => movieController.createMovie(req, res))
 
 /**
  * @swagger
@@ -133,6 +136,8 @@ router.post('/', validateBody, (req, res) => movieController.createMovie(req, re
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/MovieInput'
+ *      security:
+ *        - bearerAuth: []
  *      responses:
  *        200:
  *          description: Movie updated
@@ -148,7 +153,7 @@ router.post('/', validateBody, (req, res) => movieController.createMovie(req, re
  *        500:
  *          description: Server error
  */
-router.put('/:id', validateBody, (req, res) => movieController.updateMovie(req, res))
+router.put('/:id', authenticateJWT, validateBody, (req, res) => movieController.updateMovie(req, res))
 
 /**
  * @swagger
@@ -164,6 +169,8 @@ router.put('/:id', validateBody, (req, res) => movieController.updateMovie(req, 
  *          schema:
  *            type: string
  *            description: Movie ID
+ *      security:
+ *        - bearerAuth: []
  *      responses:
  *        204:
  *          description: Movie deleted successfully (No Content)
@@ -172,7 +179,7 @@ router.put('/:id', validateBody, (req, res) => movieController.updateMovie(req, 
  *        500:
  *          description: Server error
  */
-router.delete('/:id', (req, res) => movieController.deleteMovie(req, res))
+router.delete('/:id', authenticateJWT, (req, res) => movieController.deleteMovie(req, res))
 
 /**
  * @swagger

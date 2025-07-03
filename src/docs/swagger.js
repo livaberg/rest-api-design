@@ -9,6 +9,15 @@ const swaggerOptions = {
       title: 'Movie API',
       version: '1.0.0',
       description: 'API documentation with Swagger'
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
     }
   },
   // The location of the API routes to be documented.
