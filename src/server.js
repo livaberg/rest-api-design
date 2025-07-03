@@ -41,7 +41,7 @@ app.use(cors())
 app.use(express.json())
 
 // Register routes.
-  app.use('/api/v1', apiRouter)
+app.use('/api/v1', apiRouter)
 
 // Use the Swagger UI middleware to serve API documentation.
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
