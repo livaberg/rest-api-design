@@ -1,0 +1,730 @@
+{
+	"info": {
+		"_postman_id": "4a71f38e-88d1-4584-9be8-f1f81d92ed68",
+		"name": "Movies",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33777678"
+	},
+	"item": [
+		{
+			"name": "all movies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test that the status code is 200 OK",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// ✅ Test that the Content-Type header exists and starts with \"application/json\"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"// ✅ Test that the response has a 'data' property which is an array",
+							"pm.test(\"Response has 'data' array\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\").that.is.an(\"array\");",
+							"});",
+							"",
+							"// ✅ Test that at least one movie is returned in the data array",
+							"pm.test(\"At least one movie is returned\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.length).to.be.above(0);",
+							"});",
+							"",
+							"// ✅ Test that each movie object has all required fields",
+							"pm.test(\"Each movie has required fields\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    jsonData.data.forEach(movie => {",
+							"        pm.expect(movie).to.have.property(\"id\");",
+							"        pm.expect(movie).to.have.property(\"title\");",
+							"        pm.expect(movie).to.have.property(\"release_year\");",
+							"        pm.expect(movie).to.have.property(\"genre\");",
+							"        pm.expect(movie).to.have.property(\"description\");",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all movies invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Check that the status code is 400 (Bad Request)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"// ✅ Check that Content-Type is application/json",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"// ✅ Check that the response contains an error message",
+							"pm.test(\"Response contains errors array\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"errors\").that.is.an(\"array\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies?year=201",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "201"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful retrieval of movie by ID",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains movie details\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\");",
+							"    pm.expect(jsonData.data).to.have.property(\"id\");",
+							"    pm.expect(jsonData.data).to.have.property(\"title\");",
+							"    pm.expect(jsonData.data).to.have.property(\"release_year\");",
+							"    pm.expect(jsonData.data).to.have.property(\"genre\");",
+							"    pm.expect(jsonData.data).to.have.property(\"description\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77dd4",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"686d19044e544c01d4a77dd4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "movie by id invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure for non-existent movie ID (404)",
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"  const jsonData = pm.response.json();",
+							"  pm.expect(jsonData).to.have.property(\"message\");",
+							"  pm.expect(jsonData.message).to.be.a(\"string\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies/68611007f8f1ea8de2300a33",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"68611007f8f1ea8de2300a33"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful movie creation with auth",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains created movie\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\");",
+							"    pm.expect(jsonData.data).to.have.property(\"id\");",
+							"    pm.expect(jsonData.data).to.have.property(\"title\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwtToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{$randomWords}}\",\n    \"release_year\": 2019,\n    \"genre\": \"Adventure\",\n    \"description\": \"{{$randomPhrase}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/movies",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create movie invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure adding movie without authentication (401)",
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"error\");",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"error\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{$randomWords}}\",\n    \"release_year\": 200,\n    \"genre\": \"Adventure\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/movies",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful movie update with auth",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains updated movie\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\");",
+							"    pm.expect(jsonData.data).to.have.property(\"id\");",
+							"    pm.expect(jsonData.data).to.have.property(\"title\");",
+							"    pm.expect(jsonData.data).to.have.property(\"release_year\");",
+							"    pm.expect(jsonData.data).to.have.property(\"genre\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwtToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{$randomWords}}\",\n    \"release_year\": 2019,\n    \"genre\": \"Adventure\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77dd5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"686d19044e544c01d4a77dd5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update movie invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure updating movie with invalid data (400)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error messages\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"errors\");",
+							"    pm.expect(jsonData.errors).to.be.an(\"array\").that.is.not.empty;",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwtToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"{{$randomWords}}\",\n    \"release_year\": 2021,\n    \"genre\": \"{{$randomInt}}\"\n}\n\n   ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77dd5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"686d19044e544c01d4a77dd5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful movie deletion with auth",
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwtToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77dd6",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"686d19044e544c01d4a77dd6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete movie invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure deleting non-existent movie (404)",
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\");",
+							"}); ",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies/686d154fb02492c5a4e77222",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"686d154fb02492c5a4e77222"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ratings for movie",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful retrieval of movie ratings",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains ratings array\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\").that.is.an(\"array\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77ddf/ratings",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"686d19044e544c01d4a77ddf",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ratings for movie invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure retrieving ratings for non-existent movie (404)",
+							"pm.test(\"Status code is 404\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\");",
+							"}); "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/movies/68611007f8f1ea8de2300b05/ratings",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"movies",
+						"68611007f8f1ea8de2300b05",
+						"ratings"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrlDev",
+			"value": "http://localhost:3000/api/v1",
+			"type": "default"
+		},
+		{
+			"key": "accessToken",
+			"value": "---",
+			"type": "string"
+		}
+	]
+}

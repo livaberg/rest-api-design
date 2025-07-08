@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "9d981cfe-44a8-4e28-8f6a-6299397d8751",
+		"name": "Actors",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33777678"
+	},
+	"item": [
+		{
+			"name": "all actors",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful retrieval of actors list",
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", () => {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains data array\", () => {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\").that.is.an(\"array\");",
+							"});",
+							"",
+							"pm.test(\"Each actor in data array has expected properties\", () => {",
+							"    const jsonData = pm.response.json();",
+							"    jsonData.data.forEach(actor => {",
+							"        pm.expect(actor).to.have.property(\"id\");",
+							"        pm.expect(actor).to.have.property(\"name\");",
+							"        pm.expect(actor).to.have.property(\"movies\").that.is.an(\"array\");",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/actors",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"actors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all actors invalid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure retrieving actors with invalid query parameters (if applicable)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains errors array\", () => {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"errors\").that.is.an(\"array\");",
+							"    pm.expect(jsonData.errors.length).to.be.above(0);",
+							"    pm.expect(jsonData.errors[0]).to.have.property(\"msg\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/actors?limit=-4",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"actors"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "-4"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
