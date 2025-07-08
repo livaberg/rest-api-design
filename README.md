@@ -1,26 +1,25 @@
 # Project Title
-Clearly state the name of your API project.
+Movies API
 
 # Implementation type
 REST
 
 # Links 
-- [Production url]
-- [Dccumentation url]
+- [[Production url](https://cscloud7-20.lnu.se/movies-api/api/v1)]
+- [[Dccumentation url](https://cscloud7-20.lnu.se/movies-api/api-docs/)]
 
 ## Description
-Provide a concise summary of what your API does and its main features
+A RESTful API for managing a movie database. Users can register, log in, and perform CRUD operations on movies. The API also provides read-only access to actors and ratings. JWT authentication is used for protected endpoints, and the API follows REST principles with HATEOAS, filtering, and pagination support.
 
 ## Technologies Used
-List the primary technologies and tools utilized in your project for quick reference.
+Node.js  
+Express  
+Javascript  
+MongoDB  
+Mongoose  
+JWT  
+Postman  
 
-## Installation Instructions
-   - **Steps:**
-     - **Clone the Repository:** Instructions to clone the project from GitHub.
-     - **Navigate to the Project Directory:** Change directory to the cloned repository.
-     - **Install Dependencies:** Install necessary packages using `npm install`.
-     - **Configure Environment Variables:** Set up the `.env` file with required environment variables.
-   - **Testing with Postman:**
-     - **Import the Collection:** Guide on how to import the provided Postman collection.
-     - **Set Up Environment Variables:** Instructions to configure environment variables within Postman.
-     - **Run the Tests:** Steps to execute the tests using Postman or Newman for automation.
+## Testing
+
+The API is tested using Postman, in line with the instructions provided in TESTING.md. Full Postman collections are included in the project under the /tests directory.
