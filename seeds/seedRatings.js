@@ -3,8 +3,8 @@ import path from 'path'
 import csv from 'csv-parser'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import Rating from '../src/models/rating.js'
-import Movie from '../src/models/movie.js'
+import { RatingModel } from '../src/models/rating.js'
+import { MovieModel } from '../src/models/movie.js'
 
 dotenv.config()
 
@@ -29,7 +29,7 @@ const seedRatings = async () => {
     }
 
     // Fetch all movies to create a mapping from TMDB IDs to MongoDB Object IDs
-    const movies = await Movie.find({}, { tmdbId: 1, _id: 1 }).lean()
+    const movies = await MovieModel.find({}, { tmdbId: 1, _id: 1 }).lean()
     const tmdbToMongoIdMap = new Map(movies.map(m => [m.tmdbId, m._id]))
 
     const results = []
@@ -56,8 +56,8 @@ const seedRatings = async () => {
         .on('error', (err) => reject(err))
     })
 
-    await Rating.deleteMany({})
-    await Rating.insertMany(results)
+    await RatingModel.deleteMany({})
+    await RatingModel.insertMany(results)
     console.log(`Seeded ${results.length} ratings!`)
 
     await mongoose.connection.close()

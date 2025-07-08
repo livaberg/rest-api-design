@@ -3,7 +3,7 @@ import path from 'path'
 import csv from 'csv-parser'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import Movie from '../src/models/movie.js'
+import { MovieModel } from '../src/models/movie.js'
 
 dotenv.config()
 
@@ -70,8 +70,8 @@ const seedMovies = async () => {
         })
         .on('end', async () => {
           try {
-            await Movie.deleteMany({})
-            await Movie.insertMany(results)
+            await MovieModel.deleteMany({})
+            await MovieModel.insertMany(results)
             console.log(`Seeded ${results.length} movies!`)
             resolve()
           } catch (err) {

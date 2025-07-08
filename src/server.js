@@ -11,6 +11,7 @@ import helmet from 'helmet' // Middleware for setting various HTTP headers for s
 import dotenv from 'dotenv' // Module to load environment variables from a .env file
 import http from 'http' // Node.js HTTP module for creating the server
 import '@lnu/json-js-cycle'
+import rateLimit from 'express-rate-limit' // Middleware for rate limiting
 
 import { connectToDatabase } from '../db.js' // Function to connect to MongoDB
 import { swaggerUi, swaggerSpec } from './docs/swagger.js' // Swagger UI for API documentation
@@ -26,19 +27,29 @@ await connectToDatabase(process.env.MONGODB_URI)
 const app = express()
 
 // Set various HTTP headers to make the application little more secure (https://www.npmjs.com/package/helmet).
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"]
-    }
-  }
-}))
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+      },
+    },
+  })
+)
 
 // Enable Cross Origin Resource Sharing (CORS) (https://www.npmjs.com/package/cors).
 app.use(cors())
 
 app.use(express.json())
+
+const globalLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minut
+  max: 100, // Max 100 requests per IP
+  message: 'Too many requests. Please slow down.',
+})
+
+app.use(globalLimiter)
 
 // Register routes.
 app.use('/api/v1', apiRouter)
@@ -51,37 +62,33 @@ app.use((err, req, res, next) => {
   console.error(err) // Log the error to the console
 
   if (process.env.NODE_ENV === 'production') {
-      // Ensure a valid status code is set for the error.
-      // If the status code is not provided, default to 500 (Internal Server Error).
-      // This prevents leakage of sensitive error details to the client.
-      if (!err.status) {
-        err.status = 500
-        err.message = http.STATUS_CODES[err.status]
-      }
-
-      // Send only the error message and status code to prevent leakage of sensitive information.
-      res
-        .status(err.status)
-        .json({
-          error: err.message
-        })
-
-      return
+    // Ensure a valid status code is set for the error.
+    // If the status code is not provided, default to 500 (Internal Server Error).
+    // This prevents leakage of sensitive error details to the client.
+    if (!err.status) {
+      err.status = 500
+      err.message = http.STATUS_CODES[err.status]
     }
 
-    // ---------------------------------------------------
-    // ⚠️ WARNING: Development Environment Only!
-    //             Detailed error information is provided.
-    // ---------------------------------------------------
+    // Send only the error message and status code to prevent leakage of sensitive information.
+    res.status(err.status).json({
+      error: err.message,
+    })
 
-    // Deep copies the error object and returns a new object with
-    // enumerable and non-enumerable properties (cyclical structures are handled).
-    const copy = JSON.decycle(err, { includeNonEnumerableProperties: true })
+    return
+  }
 
-    return res
-      .status(err.status || 500)
-      .json(copy)
-  })
+  // ---------------------------------------------------
+  // ⚠️ WARNING: Development Environment Only!
+  //             Detailed error information is provided.
+  // ---------------------------------------------------
+
+  // Deep copies the error object and returns a new object with
+  // enumerable and non-enumerable properties (cyclical structures are handled).
+  const copy = JSON.decycle(err, { includeNonEnumerableProperties: true })
+
+  return res.status(err.status || 500).json(copy)
+})
 
 // Starts the HTTP server listening for connections.
 const server = app.listen(process.env.PORT || 3000, () => {

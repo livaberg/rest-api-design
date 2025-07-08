@@ -3,8 +3,8 @@ import path from 'path'
 import csv from 'csv-parser'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import Actor from '../src/models/actor.js'
-import Movie from '../src/models/movie.js'
+import { ActorModel } from '../src/models/actor.js'
+import { MovieModel } from '../src/models/movie.js'
 
 dotenv.config()
 
@@ -29,7 +29,7 @@ const seedActors = async () => {
     }
 
     // Fetch all valid movie IDs from the Movie collection
-    const movies = await Movie.find({}, { tmdbId: 1, _id: 1 }).lean()
+    const movies = await MovieModel.find({}, { tmdbId: 1, _id: 1 }).lean()
     const tmdbToMongoIdMap = new Map(
       movies.map((m) => [m.tmdbId, m._id.toString()])
     )
@@ -93,8 +93,8 @@ const seedActors = async () => {
     }))
 
     // Clear the Actor collection before seeding
-    await Actor.deleteMany({})
-    await Actor.insertMany(actors)
+    await ActorModel.deleteMany({})
+    await ActorModel.insertMany(actors)
     console.log(`Seeded ${actors.length} actors!`)
 
     // Disconnect from DB after seeding

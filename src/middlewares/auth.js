@@ -17,7 +17,7 @@ export function authenticateJWT(req, res, next) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res
       .status(401)
-      .json({ message: 'Authorization header missing or malformed' })
+      .json({ error: "Unauthorized", message: 'Authorization header missing or malformed' })
   }
 
   const token = authHeader.split(' ')[1]
@@ -27,6 +27,6 @@ export function authenticateJWT(req, res, next) {
     req.user = decoded
     next()
   } catch (err) {
-    return res.status(403).json({ message: 'Invalid or expired token' })
+    return res.status(403).json({ error: "Forbidden", message: 'Invalid or expired token' })
   }
 }
