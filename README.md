@@ -8,8 +8,8 @@ REST
 
 # Links
 
-- [[Production url](https://cscloud7-20.lnu.se/movies-api/api/v1)]
-- [[Dccumentation url](https://cscloud7-20.lnu.se/movies-api/api-docs/)]
+- [API](https://rest-api-design.onrender.com/api/v1)  
+- [Documentation](https://rest-api-design.onrender.com/api-docs/)  
 
 ## Description
 
