@@ -10,6 +10,16 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API documentation with Swagger'
     },
+    servers: [
+      {
+        url: 'http://localhost:3000/api/v1',
+        description: 'Local server'
+      },
+      {
+        url: 'https://rest-api-design.onrender.com/api/v1',
+        description: 'Production server'
+      }
+    ],
     components: {
       securitySchemes: {
         bearerAuth: {
