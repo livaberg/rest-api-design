@@ -1,13 +1,375 @@
 {
 	"info": {
-		"_postman_id": "4a71f38e-88d1-4584-9be8-f1f81d92ed68",
-		"name": "Movies",
+		"_postman_id": "1b079c7d-aaa3-48aa-88e8-b7cda99c1ee4",
+		"name": "Movie API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "33777678"
 	},
 	"item": [
 		{
-			"name": "all movies",
+			"name": "all actors Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful retrieval of actors list",
+							"pm.test(\"Status code is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", () => {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains data array\", () => {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\").that.is.an(\"array\");",
+							"});",
+							"",
+							"pm.test(\"Each actor in data array has expected properties\", () => {",
+							"    const jsonData = pm.response.json();",
+							"    jsonData.data.forEach(actor => {",
+							"        pm.expect(actor).to.have.property(\"id\");",
+							"        pm.expect(actor).to.have.property(\"name\");",
+							"        pm.expect(actor).to.have.property(\"movies\").that.is.an(\"array\");",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/actors",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"actors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all actors invalid Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure retrieving actors with invalid query parameters (if applicable)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains errors array\", () => {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"errors\").that.is.an(\"array\");",
+							"    pm.expect(jsonData.errors.length).to.be.above(0);",
+							"    pm.expect(jsonData.errors[0]).to.have.property(\"msg\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/actors?limit=-4",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"actors"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "-4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register invalid Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure on duplicate email or missing fields",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"message\");",
+							"    pm.expect(jsonData.message).to.include(\"password\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"generatedEmail\", pm.variables.replaceIn('{{$randomEmail}}'));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{generatedEmail}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful user registration",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains user id and email\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data).to.have.property(\"_id\");",
+							"    pm.expect(jsonData.data).to.have.property(\"email\");",
+							"    pm.expect(jsonData.data.email).to.include(\"@\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"generatedEmail\", pm.variables.replaceIn('{{$randomEmail}}'));",
+							"",
+							"const randomNum = Math.floor(1000 + Math.random() * 9000);",
+							"pm.environment.set(\"generatedPassword\", `Pass${randomNum}`);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{generatedEmail}}\",\n    \"password\": \"{{generatedPassword}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful login returns JWT token",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains JWT token\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"token\").that.is.a(\"string\").and.not.empty;",
+							"    // Save token to environment variable for future requests",
+							"    pm.environment.set(\"jwtToken\", jsonData.token);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"{{generatedEmail}}\",\n    \"password\": \"{{generatedPassword}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login invalid Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure on invalid credentials",
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error message\", function () {",
+							"  const jsonData = pm.response.json();",
+							"  pm.expect(jsonData).to.have.property(\"message\");",
+							"  pm.expect(jsonData.message).to.include(\"Invalid email\");",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"testhej@example.com\",\n  \"password\": \"supersecret123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/users/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all movies Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -71,7 +433,7 @@
 			"response": []
 		},
 		{
-			"name": "all movies invalid",
+			"name": "all movies invalid Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -123,7 +485,7 @@
 			"response": []
 		},
 		{
-			"name": "movie by id",
+			"name": "movie by id Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -173,7 +535,7 @@
 			"response": []
 		},
 		{
-			"name": "movie by id invalid",
+			"name": "movie by id invalid Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -220,7 +582,7 @@
 			"response": []
 		},
 		{
-			"name": "create movie",
+			"name": "create movie Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -295,7 +657,7 @@
 			"response": []
 		},
 		{
-			"name": "create movie invalid",
+			"name": "create movie invalid Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -369,7 +731,7 @@
 			"response": []
 		},
 		{
-			"name": "update movie",
+			"name": "update movie Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -437,7 +799,7 @@
 			"response": []
 		},
 		{
-			"name": "update movie invalid",
+			"name": "update movie invalid Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -503,7 +865,7 @@
 			"response": []
 		},
 		{
-			"name": "delete movie",
+			"name": "delete movie Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -534,20 +896,20 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77dd6",
+					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77e26",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"movies",
-						"686d19044e544c01d4a77dd6"
+						"686d19044e544c01d4a77e26"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "delete movie invalid",
+			"name": "delete movie invalid Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -602,7 +964,7 @@
 			"response": []
 		},
 		{
-			"name": "ratings for movie",
+			"name": "ratings for movie Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -648,7 +1010,7 @@
 			"response": []
 		},
 		{
-			"name": "ratings for movie invalid",
+			"name": "ratings for movie invalid Copy",
 			"event": [
 				{
 					"listen": "test",
@@ -691,40 +1053,102 @@
 				}
 			},
 			"response": []
-		}
-	],
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
 		},
 		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [
-					""
-				]
-			}
-		}
-	],
-	"variable": [
-		{
-			"key": "baseUrlDev",
-			"value": "http://localhost:3000/api/v1",
-			"type": "default"
+			"name": "all ratings Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test successful retrieval of ratings list",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains 'ratings' array\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"data\").that.is.an(\"array\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/ratings",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"ratings"
+					]
+				}
+			},
+			"response": []
 		},
 		{
-			"key": "accessToken",
-			"value": "---",
-			"type": "string"
+			"name": "all ratings invalid Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// ✅ Test failure retrieving ratings with invalid query parameters (if applicable)",
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"    const contentType = pm.response.headers.get(\"Content-Type\");",
+							"    pm.expect(contentType).to.match(/^application\\/json\\b/);",
+							"});",
+							"",
+							"pm.test(\"Response contains error messages\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property(\"errors\");",
+							"    pm.expect(jsonData.errors).to.be.an(\"array\").that.is.not.empty;",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/ratings?page=abc",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"ratings"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "abc"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
