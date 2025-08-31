@@ -17,10 +17,10 @@ const userRepository = new UserRepository()
 const userService = new UserService(userRepository)
 const userController = new UserController(userService)
 
-// Middleware to limit login and registration attempts to prevent brute force attacks.
+// Mild restriction on login and registration attempts to prevent brute force attacks.
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // max 5 attempts per IP
+  windowMs: 60 * 1000, // 1 minute
+  max: 100, // Max 100 attempts per IP
   message: 'Too many login/register attempts. Try again later.'
 })
 

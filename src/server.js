@@ -43,9 +43,10 @@ app.use(cors())
 
 app.use(express.json())
 
+// Mild global restriction on the number of requests to prevent abuse and flooding.
 const globalLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minut
-  max: 100, // Max 100 requests per IP
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 500, // Max 500 requests per IP
   message: 'Too many requests. Please slow down.',
 })
 
