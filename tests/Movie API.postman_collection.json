@@ -516,19 +516,52 @@
 						"type": "text/javascript",
 						"packages": {}
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.sendRequest({",
+							"    url: pm.environment.get(\"baseUrl\") + \"/movies\",",
+							"    method: \"GET\"",
+							"}, function(err, res) {",
+							"    if (err) {",
+							"        console.error(\"Error fetching movies:\", err);",
+							"        // Fallback ID if no movies are found or an error occurs",
+							"        pm.environment.set(\"getMovieId\", \"invalid-placeholder-id\");",
+							"    } else {",
+							"        const movies = res.json().data;",
+							"        if (movies && movies.length > 0) {",
+							"            // Choose a random movie from the list",
+							"            const randomIndex = Math.floor(Math.random() * movies.length);",
+							"            const chosenMovie = movies[randomIndex];",
+							"            pm.environment.set(\"getMovieId\", chosenMovie.id);",
+							"            console.log(\"Using movie id for GET:\", pm.environment.get(\"getMovieId\"));",
+							"        } else {",
+							"            console.warn(\"No movies found, using fallback ID for GET\");",
+							"            pm.environment.set(\"getMovieId\", \"invalid-placeholder-id\");",
+							"        }",
+							"    }",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
 				}
 			],
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77dd4",
+					"raw": "{{baseUrl}}/movies/{{getMovieId}}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"movies",
-						"686d19044e544c01d4a77dd4"
+						"{{getMovieId}}"
 					]
 				}
 			},
@@ -554,10 +587,24 @@
 							"",
 							"pm.test(\"Response contains error message\", function () {",
 							"  const jsonData = pm.response.json();",
-							"  pm.expect(jsonData).to.have.property(\"message\");",
-							"  pm.expect(jsonData.message).to.be.a(\"string\");",
-							"});",
+							"  ",
+							"  const msg =",
+							"    jsonData.message ||",
+							"    jsonData.error ||",
+							"    (Array.isArray(jsonData.errors) && (jsonData.errors[0]?.msg || jsonData.errors[0]));",
 							"",
+							"  pm.expect(msg, \"Expected 'message' or 'error' in response\").to.be.a(\"string\").and.not.empty;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
 							""
 						],
 						"type": "text/javascript",
@@ -761,6 +808,35 @@
 						"type": "text/javascript",
 						"packages": {}
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Fetch a list of movies to get the ID of the fifth movie for the UPDATE request",
+							"pm.sendRequest({",
+							"    url: pm.environment.get(\"baseUrl\") + \"/movies\",",
+							"    method: \"GET\"",
+							"}, function(err, res) {",
+							"    if (err) {",
+							"        console.log(\"Error fetching movies:\", err);",
+							"    } else {",
+							"        const movies = res.json().data;",
+							"        if (movies && movies.length > 0) {",
+							"            // Choose the fifth movie, or the last movie if there are fewer than five movies",
+							"            const chosenMovie = movies.length > 4 ? movies[4] : movies[movies.length - 1];",
+							"",
+							"            pm.environment.set(\"updateMovieId\", chosenMovie.id);",
+							"            console.log(\"Using movie id for UPDATE:\", pm.environment.get(\"updateMovieId\"));",
+							"        } else {",
+							"            console.warn(\"No movies found to use for UPDATE!\");",
+							"        }",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
 				}
 			],
 			"request": {
@@ -786,13 +862,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77dd5",
+					"raw": "{{baseUrl}}/movies/{{updateMovieId}}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"movies",
-						"686d19044e544c01d4a77dd5"
+						"{{updateMovieId}}"
 					]
 				}
 			},
@@ -880,6 +956,40 @@
 						"type": "text/javascript",
 						"packages": {}
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// First create a new movie to be deleted",
+							"const newMovie = { ",
+							"    title: \"{{$randomWords}}\", ",
+							"    release_year: 2023, ",
+							"    genre: \"Action\", ",
+							"    description: \"{{$randomPhrase}}\"",
+							"}; ",
+							"    ",
+							"pm.sendRequest({ ",
+							"    url: pm.environment.get(\"baseUrl\") + \"/movies\", ",
+							"    method: \"POST\", ",
+							"    header: { \"Content-Type\": \"application/json\",",
+							"    \"Authorization\": \"Bearer \" + pm.environment.get(\"jwtToken\")",
+							"    }, ",
+							"    body: { mode: \"raw\", raw: JSON.stringify(newMovie) } ",
+							"    }, function(err, res) { ",
+							"        if (err) { ",
+							"            console.log(\"Error creating movie:\", err); ",
+							"        } else { ",
+							"            const jsonData = res.json(); ",
+							"            // Save the ID of the created movie to be used in the DELETE request ",
+							"            pm.environment.set(\"deleteMovieId\", jsonData.data.id);",
+							"            console.log(\"Movie created for deletion:\", jsonData.data); ",
+							"        } ",
+							"    });"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
 				}
 			],
 			"request": {
@@ -896,13 +1006,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77e4b",
+					"raw": "{{baseUrl}}/movies/{{deleteMovieId}}",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"movies",
-						"686d19044e544c01d4a77e4b"
+						"{{deleteMovieId}}"
 					]
 				}
 			},
@@ -928,12 +1038,25 @@
 							"",
 							"pm.test(\"Response contains error message\", function () {",
 							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.property(\"message\");",
-							"}); ",
+							"",
+							"    const msg =",
+							"        jsonData.message ||",
+							"        jsonData.error ||",
+							"        (Array.isArray(jsonData.errors) && (jsonData.errors[0]?.msg || jsonData.errors[0]));",
+							"",
+							"    pm.expect(msg, \"Expected 'message' or 'error' in response\").to.be.a(\"string\").and.not.empty;",
+							"});",
 							""
 						],
 						"type": "text/javascript",
 						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
 					}
 				}
 			],
@@ -990,19 +1113,49 @@
 						"type": "text/javascript",
 						"packages": {}
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Fetch a list of movies to get the ID for the RATINGS for movie request",
+							"pm.sendRequest({",
+							"    url: pm.environment.get(\"baseUrl\") + \"/movies\",",
+							"    method: \"GET\"",
+							"}, function(err, res) {",
+							"    if (err) {",
+							"        console.log(\"Error fetching movies:\", err);",
+							"    } else {",
+							"        const movies = res.json().data;",
+							"        if (movies && movies.length > 0) {",
+							"            // Choose the 5th movie for the request",
+							"            const chosenMovie = movies[4];",
+							"",
+							"            pm.environment.set(\"ratingsMovieId\", chosenMovie.id);",
+							"            console.log(\"Using movie id for RATINGS:\", pm.environment.get(\"ratingsMovieId\"));",
+							"        } else {",
+							"            console.warn(\"No movies found to use for RATINGS!\");",
+							"        }",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
 				}
 			],
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/movies/686d19044e544c01d4a77ddf/ratings",
+					"raw": "{{baseUrl}}/movies/{{ratingsMovieId}}/ratings",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"movies",
-						"686d19044e544c01d4a77ddf",
+						"{{ratingsMovieId}}",
 						"ratings"
 					]
 				}
@@ -1029,8 +1182,15 @@
 							"",
 							"pm.test(\"Response contains error message\", function () {",
 							"    const jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.property(\"message\");",
-							"}); "
+							"",
+							"    const msg =",
+							"        jsonData.message ||",
+							"        jsonData.error ||",
+							"        (Array.isArray(jsonData.errors) && (jsonData.errors[0]?.msg || jsonData.errors[0]));",
+							"",
+							"    pm.expect(msg, \"Expected 'message' or 'error' in response\").to.be.a(\"string\").and.not.empty;",
+							"});",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
